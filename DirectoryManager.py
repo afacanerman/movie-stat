@@ -1,6 +1,7 @@
 __author__ = 'develoopers'
 
 import re
+import os
 from os import walk
 
 
@@ -36,3 +37,17 @@ class DirectoryManager:
             .lstrip().rstrip()
 
         return movie_path
+
+    def getApiUrlFor(self, movie_name):
+        # sample uri 'http://www.omdbapi.com/?t=back+to+the+future&y=&plot=short&r=json'
+        movie_name = movie_name.replace(' ', '+')
+        return "http://www.omdbapi.com/?t=%s&y=&plot=short&r=json" % (movie_name) 
+
+    def rename_directory(self, movie_name, movie):
+        source = "%s/%s" % (self.movieDirectory, movie_name)
+        updated_movie_name = self.get_formated_movie_name(movie)
+        destination = "%s/%s" % (self.movieDirectory, updated_movie_name)
+        os.rename(source, destination)
+
+    def get_formated_movie_name(self, movie):
+        return "%s_%s_%s" % (movie.Title, movie.Year, movie.imdbRating)
