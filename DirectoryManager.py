@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 __author__ = 'develoopers'
 
+import sys
 import re
 import os
 from os import walk
@@ -19,7 +21,7 @@ class DirectoryManager:
             break
 
         for movie_path in movie_dir_list:
-            if not re.match('.*?_(\d*)_\d.\d', movie_path):
+            if not re.match('.*?_(\d*|\d*-\d*|\d*-)_\d.\d', movie_path):
                 return_list.append(self.remove_unexpected_string(movie_path))
 
         return return_list
@@ -38,16 +40,25 @@ class DirectoryManager:
 
         return movie_path
 
-    def getApiUrlFor(self, movie_name):
+    def get_api_url(self, movie_name):
         # sample uri 'http://www.omdbapi.com/?t=back+to+the+future&y=&plot=short&r=json'
         movie_name = movie_name.replace(' ', '+')
         return "http://www.omdbapi.com/?t=%s&y=&plot=short&r=json" % (movie_name) 
 
     def rename_directory(self, movie_name, movie):
-        source = "%s/%s" % (self.movieDirectory, movie_name)
+        source = "%s%s" % (self.movieDirectory, movie_name)
         updated_movie_name = self.get_formated_movie_name(movie)
-        destination = "%s/%s" % (self.movieDirectory, updated_movie_name)
-        os.rename(source, destination)
+        destination = "%s%s" % (self.movieDirectory, updated_movie_name)
+        
+        try:
+            if os.path.exists(source):
+                os.rename(source, destination)
+            else:
+                print "Error trying to rename:  %s" % source
+        except:
+            e = sys.exc_info()[0]
+            print "I/O error({0}): {1}".format(e.errno, e.strerror)
 
     def get_formated_movie_name(self, movie):
         return "%s_%s_%s" % (movie.Title, movie.Year, movie.imdbRating)
+

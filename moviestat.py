@@ -36,7 +36,7 @@ def main(argv):
     movie_list = dm.get_movie_directories()
 
     for movie_name in movie_list:
-        movie_info = urllib2.urlopen(dm.getApiUrlFor(movie_name))
+        movie_info = urllib2.urlopen(dm.get_api_url(movie_name))
         
         decoded_data = json.loads(movie_info.read())
         
